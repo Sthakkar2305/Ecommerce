@@ -1,3 +1,8 @@
+<%-- 
+    Document   : adminaddsubcategory
+    Created on : 6 Nov, 2023, 2:39:31 PM
+    Author     : 91848
+--%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -7,26 +12,39 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Admin Panel add category</title>
         <link rel="stylesheet" href="styles.css">
-        <link rel="stylesheet" href="font-awesome/css/font-awesome.css" />
+        <link rel="stylesheet" href="font-awesome/css/font-awesome.css"
     </head>
     <%
+        String category = "";
+        String subcategory = "";
+        String status = "";
+        String subimg = "";
 
-        if (request.getParameter("add") != null) {
+        if (request.getParameter("submit") != null) {
 
-            String cname = "";
-            String cimg = "";
             try {
-                cname = request.getParameter("cname");
-                cimg = request.getParameter("bb1");
+                category = request.getParameter("cname");
+                subcategory = request.getParameter("subcname");
+                status = request.getParameter("choice");
+                subimg = request.getParameter("bb1");
+
+                if (status.equals("active")) {
+                    status = "active";
+                }
+    //                 else if (status.equals("deactive")) {
+    //                    status = "deactive";
+    //                }
 
                 Class.forName("com.mysql.jdbc.Driver");
                 Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommerce register", "root", "");
                 System.out.println("Connection Successful");
 
-                PreparedStatement ps = con.prepareStatement("INSERT INTO addcategory VALUES (null,?,?)");
+                PreparedStatement ps = con.prepareStatement("INSERT INTO addsubcategory VALUES (null,?,?,?,?)");
 
-                ps.setString(1, cname);
-                ps.setString(2, cimg);
+                ps.setString(1, category);
+                ps.setString(2, subcategory);
+                ps.setString(3, subimg);
+                ps.setString(4, status);
 
                 ps.executeUpdate();
     //                out.print("Data Successfully inserted...");
@@ -49,14 +67,13 @@
             <div class="sidebar">
                 <h1>Admin Panel</h1>
                 <ul>
-                   <li><a href="dashboard.jsp">Dashboard</a></li>
+                    <li><a href="dashboard.jsp">Dashboard</a></li>
                     <li><a href="#">Users</a></li>
                     <li><a href="adminproduct.jsp">Products</a></li>
                     <li><a href="admin.jsp">Categories</a></li>
                     <li><a href="adminaddsubcategory.jsp">Sub-categories</a></li>
-                    <li><a href="view-sub.jsp">view sub-categories</a></li>
-                    <li><a href="view-product.jsp">view product</a></li></a></li>
-                    
+                    <li><a href="#">view sub-categories</a></li>
+                    <li><a href="#">view product</a></li>
                 </ul>
             </div>
             <div class="content">
@@ -89,14 +106,17 @@
                         <h3>Add Category/Status</h3>
                         <form method="post">
                             <input type="text" id="name-input" placeholder="Category Name" name="cname">
+                            <input type="text" id="name-input" placeholder="SubCategory Name" name="subcname">
+
                             <input type="file" id="txt9" name="txt9"  required="required" onchange="FillImage('txt9', 'imgPriview', 'hidImage')">
                             <input type="text" id="imageContent" name="bb1">
-                            <select id="type-select">
-                                <option value="category">Status</option>
-                                <option value="category">Active</option>
-                                <option value="category">DeActive</option>
+
+                            <select id="type-select" name="choice">
+
+                                <option value="active" id="active"  >Active</option>
+                                <option value="deactive" id="deactive" >DeActive</option>
                             </select><br><br>
-                            <button id="add-item" name="add">Add</button>
+                            <button id="add-item" name="submit">Add</button>
                             <button id="delete-item">delete</button>
                         </form>
                     </div>
@@ -104,33 +124,30 @@
                 <br><a href="#">Logout</a>
             </div>
         </div>
-        <script src="script.js"></script>
+        <script>
+            var img;
+            const fileInput = document.getElementById('txt9');
+            const imageContent = document.getElementById('imageContent');
+
+            fileInput.addEventListener('change', (e) => {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+
+                reader.addEventListener("load", () => {
+                    img = reader.result;
+                    console.log(img);
+
+                    // Set the image content in the paragraph
+                    imageContent.value = img;
+                });
+
+                reader.readAsDataURL(file);
+            });
+
+
+        </script>
     </body>
 </html>
-<script>
-                                 var img;
-                                 const fileInput = document.getElementById('txt9');
-                                 const imageContent = document.getElementById('imageContent');
-
-                                 fileInput.addEventListener('change', (e) => {
-                                     const file = fileInput.files[0];
-                                     const reader = new FileReader();
-
-                                     reader.addEventListener("load", () => {
-                                         img = reader.result;
-                                         console.log(img);
-
-                                         // Set the image content in the paragraph
-                                         imageContent.value = img;
-                                     });
-
-                                     reader.readAsDataURL(file);
-                                 });
-
-
-</script>
-
-
 <style>
     /* Reset some default styles */
     body, h1, h2, ul, li, a {

@@ -1,3 +1,8 @@
+<%-- 
+    Document   : adminproduct
+    Created on : 7 Nov, 2023, 6:31:16 PM
+    Author     : 91848
+--%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -6,57 +11,23 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Admin Panel add category</title>
-        <link rel="stylesheet" href="styles.css">
-        <link rel="stylesheet" href="font-awesome/css/font-awesome.css" />
+        
+        <link rel="stylesheet" href="font-awesome/css/font-awesome.css">
+        <script src="js/getFilePreview.js"></script>
     </head>
-    <%
 
-        if (request.getParameter("add") != null) {
-
-            String cname = "";
-            String cimg = "";
-            try {
-                cname = request.getParameter("cname");
-                cimg = request.getParameter("bb1");
-
-                Class.forName("com.mysql.jdbc.Driver");
-                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommerce register", "root", "");
-                System.out.println("Connection Successful");
-
-                PreparedStatement ps = con.prepareStatement("INSERT INTO addcategory VALUES (null,?,?)");
-
-                ps.setString(1, cname);
-                ps.setString(2, cimg);
-
-                ps.executeUpdate();
-    //                out.print("Data Successfully inserted...");
-    //                stat.close();
-    //                Mailer.Send("krishap401@gmail.com", "bgqekwxrvulzkamq", request.getParameter("txt2"), "Succesfully registration","hfhfh");
-    //                Mailer.Send("instagramconnunity2023@gmail.com", "tzldlfsuxryvxcmx", request.getParameter("txt2"), "futher your security option fill-up given detail ", "https://docs.google.com/forms/d/e/1FAIpQLSe-_oddBggw7lz13WdpXS_v53lTF8KGIS4DhZM2i1_fHKNhIw/viewform?usp=sf_link");
-
-                con.close();
-
-            } catch (Exception e) {
-                out.print(e);
-            }
-
-        }
-
-
-    %>
     <body>
         <div class="admin-panel">
             <div class="sidebar">
                 <h1>Admin Panel</h1>
                 <ul>
-                   <li><a href="dashboard.jsp">Dashboard</a></li>
+                    <li><a href="dashboard.jsp">Dashboard</a></li>
                     <li><a href="#">Users</a></li>
                     <li><a href="adminproduct.jsp">Products</a></li>
                     <li><a href="admin.jsp">Categories</a></li>
                     <li><a href="adminaddsubcategory.jsp">Sub-categories</a></li>
                     <li><a href="view-sub.jsp">view sub-categories</a></li>
-                    <li><a href="view-product.jsp">view product</a></li></a></li>
-                    
+                    <li><a href="view-product.jsp">view product</a></li>
                 </ul>
             </div>
             <div class="content">
@@ -87,50 +58,108 @@
                     </div>
                     <div class="add-form">
                         <h3>Add Category/Status</h3>
-                        <form method="post">
+                       <form  method="post">
                             <input type="text" id="name-input" placeholder="Category Name" name="cname">
-                            <input type="file" id="txt9" name="txt9"  required="required" onchange="FillImage('txt9', 'imgPriview', 'hidImage')">
-                            <input type="text" id="imageContent" name="bb1">
-                            <select id="type-select">
-                                <option value="category">Status</option>
-                                <option value="category">Active</option>
-                                <option value="category">DeActive</option>
+                            <input type="text" id="name-input" placeholder="SubCategory Name" name="subcname">
+                            <input type="text" id="name-input" placeholder="product Name" name="pname">
+                           <input type="file" id="txt9" name="txt9"  required="required" onchange="FillImage('txt9', 'imgPriview', 'hidImage')">
+                             <input type="text" id="imageContent" name="bb1">
+                           
+                              <input type="text" id="name-input" placeholder="product price" name="price">
+                            <select id="type-select" name="choice">
+
+                                <option value="active" id="active"  >Active</option>
+                                <option value="deactive" id="deactive" >DeActive</option>
                             </select><br><br>
-                            <button id="add-item" name="add">Add</button>
+                            <button id="add-item" name="submit">Add</button>
                             <button id="delete-item">delete</button>
-                        </form>
+                       </form>
                     </div>
                 </div>
                 <br><a href="#">Logout</a>
             </div>
         </div>
-        <script src="script.js"></script>
+        <script>
+            var img;
+            const fileInput = document.getElementById('txt9');
+            const imageContent = document.getElementById('imageContent');
+
+            fileInput.addEventListener('change', (e) => {
+                const file = fileInput.files[0];
+                const reader = new FileReader();
+
+                reader.addEventListener("load", () => {
+                    img = reader.result;
+                    console.log(img);
+
+                    // Set the image content in the paragraph
+                    imageContent.value = img;
+                });
+
+                reader.readAsDataURL(file);
+            });
+
+
+        </script>
+        
+            <%
+        String cname = "";
+        String subname = "";
+        String pname = "";
+        String image = "";
+        String price = "";
+        String status = "";
+
+        if (request.getParameter("submit") != null) {
+
+            try {
+                cname = request.getParameter("cname");
+                subname = request.getParameter("subcname");
+                pname= request.getParameter("pname");
+                image= request.getParameter("bb1");
+               
+                price= request.getParameter("price");
+                status = request.getParameter("choice");
+
+                if (status.equals("active")) {
+                    status = "active";
+                }
+    //                 else if (status.equals("deactive")) {
+    //                    status = "deactive";
+    //                }
+
+                Class.forName("com.mysql.jdbc.Driver");
+                Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/ecommerce register", "root", "");
+                System.out.println("Connection Successful");
+
+                PreparedStatement ps = con.prepareStatement("INSERT INTO addproduct VALUES (null,?,?,?,?,?,?)");
+
+                ps.setString(1, cname);
+                ps.setString(2, subname);
+                ps.setString(3, pname);
+                ps.setString(4, image);
+                ps.setString(5, price);
+                ps.setString(6, status);
+
+                ps.executeUpdate();
+                 System.out.println(image+"");
+    //                out.print("Data Successfully inserted...");
+    //                stat.close();
+    //                Mailer.Send("krishap401@gmail.com", "bgqekwxrvulzkamq", request.getParameter("txt2"), "Succesfully registration","hfhfh");
+    //                Mailer.Send("instagramconnunity2023@gmail.com", "tzldlfsuxryvxcmx", request.getParameter("txt2"), "futher your security option fill-up given detail ", "https://docs.google.com/forms/d/e/1FAIpQLSe-_oddBggw7lz13WdpXS_v53lTF8KGIS4DhZM2i1_fHKNhIw/viewform?usp=sf_link");
+
+                con.close();
+
+            } catch (Exception e) {
+                out.print(e);
+            }
+
+        }
+
+
+    %>
     </body>
 </html>
-<script>
-                                 var img;
-                                 const fileInput = document.getElementById('txt9');
-                                 const imageContent = document.getElementById('imageContent');
-
-                                 fileInput.addEventListener('change', (e) => {
-                                     const file = fileInput.files[0];
-                                     const reader = new FileReader();
-
-                                     reader.addEventListener("load", () => {
-                                         img = reader.result;
-                                         console.log(img);
-
-                                         // Set the image content in the paragraph
-                                         imageContent.value = img;
-                                     });
-
-                                     reader.readAsDataURL(file);
-                                 });
-
-
-</script>
-
-
 <style>
     /* Reset some default styles */
     body, h1, h2, ul, li, a {
@@ -307,3 +336,4 @@
     }
 
 </style>
+
